@@ -169,14 +169,15 @@ Hash getModelHash(Vehicle veh) {
 }
 
 bool isVehicleDrivable(Vehicle veh) {
+	Hash model = getModelHash(veh);
 	return (VEHICLE::IS_VEHICLE_DRIVEABLE(veh, false) &&
-		(VEHICLE::IS_THIS_MODEL_A_CAR(getModelHash(veh)) ||
-			VEHICLE::IS_THIS_MODEL_A_BIKE(getModelHash(veh)) ||
-			VEHICLE::IS_THIS_MODEL_A_QUADBIKE(getModelHash(veh)) ||
-			VEHICLE::IS_THIS_MODEL_A_HELI(getModelHash(veh)) ||
-			VEHICLE::IS_THIS_MODEL_A_PLANE(getModelHash(veh)) ||
-			VEHICLE::IS_THIS_MODEL_A_BOAT(getModelHash(veh)) ||
-			VEHICLE::IS_THIS_MODEL_A_BICYCLE(getModelHash(veh))));
+		(VEHICLE::IS_THIS_MODEL_A_CAR(model) ||
+			VEHICLE::IS_THIS_MODEL_A_BIKE(model) ||
+			VEHICLE::IS_THIS_MODEL_A_QUADBIKE(model) ||
+			VEHICLE::IS_THIS_MODEL_A_HELI(model) ||
+			VEHICLE::IS_THIS_MODEL_A_PLANE(model) ||
+			VEHICLE::IS_THIS_MODEL_A_BOAT(model) ||
+			VEHICLE::IS_THIS_MODEL_A_BICYCLE(model)));
 }
 
 Vehicle getClosestVehicleFromPedPos(Ped ped, int maxDistance, int maxHeight, bool canReturnVehicleInside) {
