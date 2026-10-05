@@ -2,7 +2,9 @@
 #include "keyboard.h"
 
 
-const int KEYS_SIZE = 255;
+constexpr int KEYS_SIZE = 255;
+constexpr int NOW_PERIOD = 100;  // ms: window in which a key-up counts as "just up"
+constexpr int MAX_DOWN = 5000;   // ms: how long a key is considered held
 
 struct {
 	DWORD time;
@@ -21,8 +23,6 @@ void OnKeyboardMessage(DWORD key, WORD repeats, BYTE scanCode, BOOL isExtended, 
 		keyStates[key].isUpNow = isUpNow;
 	}
 }
-
-const int NOW_PERIOD = 100, MAX_DOWN = 5000; // ms
 
 bool IsKeyDown(DWORD key)
 {

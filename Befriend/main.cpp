@@ -14,7 +14,7 @@
 
 // Creates a crash dump file in the GTA V root folder when an unhandled crash occurs
 LONG WINAPI CreateCrashDump(EXCEPTION_POINTERS* pExceptionPointers) {
-	HANDLE hFile = CreateFileA("MyMod_Crash.dmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE hFile = CreateFileA("Befriend_Crash.dmp", GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if (hFile != INVALID_HANDLE_VALUE) {
 		MINIDUMP_EXCEPTION_INFORMATION mei;
 		mei.ThreadId = GetCurrentThreadId();
