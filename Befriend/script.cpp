@@ -38,12 +38,6 @@ void DrawText3D(Vector3 worldPos, const char* text)
 	}
 }
 
-void printMessage(const char* message) {
-	HUD::BEGIN_TEXT_COMMAND_PRINT("STRING");
-	HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(message);
-	HUD::END_TEXT_COMMAND_PRINT(2000, true);
-}
-
 int GetFreePassengerSeat(Vehicle veh) {
 	int maxSeats = VEHICLE::GET_VEHICLE_MAX_NUMBER_OF_PASSENGERS(veh);
 
@@ -72,9 +66,7 @@ void RecruitPedestrian(Ped npc)
 
 	if (g_Menu.bodyguards.size() >= 4)
 	{
-		HUD::BEGIN_TEXT_COMMAND_PRINT("STRING");
-		HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME("~r~Squad Limit Reached! Max 4 members.");
-		HUD::END_TEXT_COMMAND_PRINT(2000, true);
+		ShowNotification("~r~Squad Limit Reached! Max 4 members.");
 		return;
 	}
 
@@ -115,11 +107,7 @@ void RecruitPedestrian(Ped npc)
 
 	g_Menu.bodyguards.push_back(newGuard);
 
-	std::string notification = "~g~" + assignedName + " has joined your squad!";
-
-	HUD::BEGIN_TEXT_COMMAND_PRINT("STRING");
-	HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(notification.c_str());
-	HUD::END_TEXT_COMMAND_PRINT(2500, true);
+	ShowNotification("~g~" + assignedName + " has joined your squad!", 2500);
 }
 
 void UpdateSquadState()
@@ -133,10 +121,7 @@ void UpdateSquadState()
 
 		if (!ENTITY::DOES_ENTITY_EXIST(currentGuardHandle) || ENTITY::IS_ENTITY_DEAD(currentGuardHandle, FALSE))
 		{
-			std::string deathReport = "~r~Squad Member " + it->codeName + " KIA!";
-			HUD::BEGIN_TEXT_COMMAND_PRINT("STRING");
-			HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME(deathReport.c_str());
-			HUD::END_TEXT_COMMAND_PRINT(3000, true);
+			ShowNotification("~r~Squad Member " + it->codeName + " KIA!", 3000);
 
 			it = g_Menu.bodyguards.erase(it);
 		}
@@ -267,9 +252,7 @@ void CheckNearestPedToTalk()
 			TASK::TASK_TURN_PED_TO_FACE_ENTITY(nearestPed, playerPed, 3000);
 			TASK::TASK_FOLLOW_TO_OFFSET_OF_ENTITY(nearestPed, playerPed, 10.0f, 10.0f, 10.0f, 2.5f, -1, 0.2f, 1);
 
-			HUD::BEGIN_TEXT_COMMAND_PRINT("STRING");
-			HUD::ADD_TEXT_COMPONENT_SUBSTRING_PLAYER_NAME("Hey, how is it going?");
-			HUD::END_TEXT_COMMAND_PRINT(3000, true);
+			ShowNotification("Hey, how is it going?", 3000);
 		}
 	}
 }
