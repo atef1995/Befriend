@@ -1,0 +1,4 @@
+.hermes/
+x64/
+.vs/
+*.user
