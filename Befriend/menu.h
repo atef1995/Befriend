@@ -1,5 +1,4 @@
-#ifndef MENU_H
-#define MENU_H
+#pragma once
 #include <string>
 #include <vector>
 #include "keyboard.h"
@@ -11,7 +10,6 @@
 
 class menu {
 private:
-	Ped playerPed;
 	int activeLineIndexMain = 0;
 	int activeLineIndexPlayer = 0;
 	std::string statusText;
@@ -36,4 +34,3 @@ public:
 
 extern menu g_Menu;
 
-#endif // !MENU_H

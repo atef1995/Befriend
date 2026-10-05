@@ -58,7 +58,7 @@ void menu::draw_menu_line(std::string caption, float lineWidth, float lineHeight
 	HUD::SET_TEXT_DROPSHADOW(0, 0, 0, 0, 0);
 	HUD::SET_TEXT_EDGE(0, 0, 0, 0, 0);
 	HUD::_SET_TEXT_ENTRY("STRING");
-	HUD::_ADD_TEXT_COMPONENT_STRING((LPSTR)caption.c_str());
+	HUD::_ADD_TEXT_COMPONENT_STRING(const_cast<char*>(caption.c_str()));
 	HUD::_DRAW_TEXT(textLeftScaled, (((lineTopScaled + 0.00278f) + lineHeightScaled) - 0.005f), 0);
 
 	HUD::SET_TEXT_FONT(font);
@@ -68,7 +68,7 @@ void menu::draw_menu_line(std::string caption, float lineWidth, float lineHeight
 	HUD::SET_TEXT_DROPSHADOW(0, 0, 0, 0, 0);
 	HUD::SET_TEXT_EDGE(0, 0, 0, 0, 0);
 	HUD::_SET_TEXT_GXT_ENTRY("STRING");
-	HUD::_ADD_TEXT_COMPONENT_STRING((LPSTR)caption.c_str());
+	HUD::_ADD_TEXT_COMPONENT_STRING(const_cast<char*>(caption.c_str()));
 	int num25 = HUD::END_TEXT_COMMAND_GET_NUMBER_OF_LINES_FOR_STRING(textLeftScaled, (((lineTopScaled + 0.00278f) + lineHeightScaled) - 0.005f));
 
 	draw_rect(lineLeftScaled, lineTopScaled + (0.00278f),
@@ -94,7 +94,7 @@ void menu::update_status_text()
 		else
 		{
 			HUD::_SET_TEXT_ENTRY("STRING");
-			HUD::_ADD_TEXT_COMPONENT_STRING((char*)statusText.c_str());
+			HUD::_ADD_TEXT_COMPONENT_STRING(const_cast<char*>(statusText.c_str()));
 		}
 		HUD::_DRAW_TEXT(0.5f, 0.5f, 0);
 	}

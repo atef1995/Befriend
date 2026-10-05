@@ -31,8 +31,8 @@ void DrawText3D(Vector3 worldPos, const char* text)
 		HUD::SET_TEXT_DROPSHADOW(0, 0, 0, 0, 0);
 		HUD::SET_TEXT_EDGE(1, 0, 0, 0, 205);
 
-		HUD::_SET_TEXT_ENTRY((char*)"STRING");
-		HUD::_ADD_TEXT_COMPONENT_STRING((char*)text);
+		HUD::_SET_TEXT_ENTRY(const_cast<char*>("STRING"));
+		HUD::_ADD_TEXT_COMPONENT_STRING(const_cast<char*>(text));
 		HUD::_DRAW_TEXT(screenX, screenY, 1);
 	}
 }
@@ -50,9 +50,9 @@ int GetFreePassengerSeat(Vehicle veh) {
 	return kNoFreeSeat;
 }
 
-enum Task
+enum class Task
 {
-	ENTER_VEHICLE
+	EnterVehicle
 };
 
 const std::string CALLSIGNS[] = { "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Ghost", "Specter" };
@@ -213,7 +213,7 @@ void EnterVehicleCommand(Ped npc) {
 
 void taskHandler(Task t, Ped npc) {
 	switch (t) {
-	case ENTER_VEHICLE:
+	case Task::EnterVehicle:
 		EnterVehicleCommand(npc);
 		break;
 	}
@@ -225,7 +225,7 @@ void keyHandler(Ped npc) {
 		RecruitPedestrian(npc);
 	}
 	else if (IsKeyJustUp(VK_F8)) {
-		taskHandler(ENTER_VEHICLE, npc);
+		taskHandler(Task::EnterVehicle, npc);
 	}
 }
 
