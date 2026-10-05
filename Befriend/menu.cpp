@@ -129,12 +129,6 @@ void menu::menu_beep()
 	AUDIO::PLAY_SOUND_FRONTEND(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0);
 }
 
-std::string menu::line_as_str(std::string text, bool* pState)
-{
-	while (text.size() < 18) text += " ";
-	return text + (pState ? (*pState ? " [ON]" : " [OFF]") : "");
-}
-
 void menu::process_squad_menu() {
 	const float lineWidth = 250.0f;
 	DWORD waitTime = 150;
@@ -150,7 +144,7 @@ void menu::process_squad_menu() {
 			for (size_t i = 0; i < bodyguards.size(); ++i)
 			{
 				Ped handle = bodyguards[i].handle;
-				if (doesEntityExistsAndIsNotNull(handle))
+				if (EntityExists(handle))
 				{
 					int hp = ENTITY::GET_ENTITY_HEALTH(handle);
 					std::string status = bodyguards[i].hasATask ? "Busy" : "Ready";
@@ -206,7 +200,7 @@ void menu::process_squad_menu() {
 
 					for (auto& member : bodyguards)
 					{
-						if (doesEntityExistsAndIsNotNull(member.handle))
+						if (EntityExists(member.handle))
 						{
 							PED::REMOVE_PED_FROM_GROUP(member.handle);
 							ENTITY::SET_PED_AS_NO_LONGER_NEEDED(&member.handle);
@@ -331,8 +325,4 @@ void menu::process_main_menu()
 			waitTime = 150;
 		}
 	}
-}
-
-bool menu::doesEntityExistsAndIsNotNull(Entity entity) {
-	return (entity != NULL && ENTITY::DOES_ENTITY_EXIST(entity));
 }

@@ -7,6 +7,7 @@
 #include "types.h"
 #include "enums.h"
 #include "Bodyguard.h"
+#include "Utils.h"
 
 class menu {
 private:
@@ -23,9 +24,7 @@ private:
 	void set_status_text(std::string str, DWORD time = 2500, bool isGxtEntry = false);
 	void get_button_state(bool* a, bool* b, bool* up, bool* down, bool* l, bool* r);
 	void menu_beep();
-	std::string line_as_str(std::string text, bool* pState);
 	void process_squad_menu();
-	bool doesEntityExistsAndIsNotNull(Entity entity);
 	bool trainer_switch_pressed();
 public:
 	std::vector<Bodyguard> bodyguards;

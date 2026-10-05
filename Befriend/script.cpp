@@ -2,6 +2,7 @@
 #include "script.h"
 #include "keyboard.h"
 #include "Bodyguard.h"
+#include "Utils.h"
 #include "menu.h"
 
 #include <string>
@@ -165,10 +166,6 @@ void UpdateSquadState()
 	}
 }
 
-bool doesEntityExistsAndIsNotNull(Entity entity) {
-	return (entity != NULL && ENTITY::DOES_ENTITY_EXIST(entity));
-}
-
 float getDistanceBetweenEntities(Entity entity1, Entity entity2) {
 	Vector3 entity1Coords = ENTITY::GET_ENTITY_COORDS(entity1, true);
 	Vector3 entity2Coords = ENTITY::GET_ENTITY_COORDS(entity2, true);
@@ -208,7 +205,7 @@ Vehicle getClosestVehicleFromPedPos(Ped ped, int maxDistance, int maxHeight, boo
 	{
 		for (int i = 0; i < count; i++)
 		{
-			if (doesEntityExistsAndIsNotNull(vehs[i]) && (canReturnVehicleInside || PED::IS_PED_IN_VEHICLE(ped, vehs[i], false) == false))
+			if (EntityExists(vehs[i]) && (canReturnVehicleInside || PED::IS_PED_IN_VEHICLE(ped, vehs[i], false) == false))
 			{
 				float distance = getDistanceBetweenEntities(ped, vehs[i]);
 				float height = getDistanceToGround(vehs[i]);
