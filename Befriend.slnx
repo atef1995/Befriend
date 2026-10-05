@@ -1,7 +1,7 @@
 <Solution>
   <Configurations>
     <Platform Name="x64" />
-    <Platform Name="x86" />
+    <Platform Name="Win32" />
   </Configurations>
   <Project Path="Befriend/Befriend.vcxproj" Id="85eaa501-e44d-4dbf-9877-ddfb30b2783c" />
 </Solution>
