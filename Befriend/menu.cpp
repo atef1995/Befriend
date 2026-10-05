@@ -3,9 +3,7 @@
 // Define global instance
 menu g_Menu;
 
-menu::menu() {
-	playerPed = PLAYER::PLAYER_PED_ID();
-}
+menu::menu() = default;
 
 void menu::draw_rect(float A_0, float A_1, float A_2, float A_3, int A_4, int A_5, int A_6, int A_7)
 {
@@ -187,7 +185,7 @@ void menu::process_squad_menu() {
 		waitTime = 0;
 
 		bool bSelect, bBack, bUp, bDown;
-		get_button_state(&bSelect, &bBack, &bUp, &bDown, NULL, NULL);
+		get_button_state(&bSelect, &bBack, &bUp, &bDown, nullptr, nullptr);
 
 		if (bSelect)
 		{
@@ -196,7 +194,7 @@ void menu::process_squad_menu() {
 			if (!bodyguards.empty())
 			{
 				if (activeLineIndexPlayer == static_cast<int>(bodyguards.size())) {
-					Vector3 playerCoords = ENTITY::GET_ENTITY_COORDS(playerPed, true);
+					Vector3 playerCoords = ENTITY::GET_ENTITY_COORDS(PLAYER::PLAYER_PED_ID(), true);
 
 					for (auto& member : bodyguards)
 					{
@@ -289,7 +287,7 @@ void menu::process_main_menu()
 		waitTime = 0;
 
 		bool bSelect, bBack, bUp, bDown;
-		get_button_state(&bSelect, &bBack, &bUp, &bDown, NULL, NULL);
+		get_button_state(&bSelect, &bBack, &bUp, &bDown, nullptr, nullptr);
 		if (bSelect)
 		{
 			menu_beep();
