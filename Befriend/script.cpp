@@ -6,7 +6,7 @@
 #include "menu.h"
 
 #include <string>
-#include <ctime>
+#include <cstdlib>
 #include <vector>
 #include <iterator>
 #include <cassert>
@@ -55,7 +55,7 @@ enum Task
 };
 
 const std::string CALLSIGNS[] = { "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Ghost", "Specter" };
-const int CALLSIGNS_COUNT = 7;
+constexpr int CALLSIGNS_COUNT = static_cast<int>(std::size(CALLSIGNS));
 
 void RecruitPedestrian(Ped npc)
 {
