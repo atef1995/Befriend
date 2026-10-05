@@ -8,7 +8,7 @@
 #include "Bodyguard.h"
 #include "Utils.h"
 
-class menu {
+class Menu {
 private:
 	int activeLineIndexMain = 0;
 	int activeLineIndexPlayer = 0;
@@ -28,9 +28,9 @@ public:
 	std::vector<Bodyguard> bodyguards;
 
 	void process_main_menu();
-	menu();
+	Menu();
 
 };
 
-extern menu g_Menu;
+extern Menu g_Menu;
 

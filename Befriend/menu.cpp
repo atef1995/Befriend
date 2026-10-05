@@ -1,16 +1,16 @@
 #include "menu.h"
 
 // Define global instance
-menu g_Menu;
+Menu g_Menu;
 
-menu::menu() = default;
+Menu::Menu() = default;
 
-void menu::draw_rect(float A_0, float A_1, float A_2, float A_3, int A_4, int A_5, int A_6, int A_7)
+void Menu::draw_rect(float A_0, float A_1, float A_2, float A_3, int A_4, int A_5, int A_6, int A_7)
 {
 	GRAPHICS::DRAW_RECT((A_0 + (A_2 * 0.5f)), (A_1 + (A_3 * 0.5f)), A_2, A_3, A_4, A_5, A_6, A_7, 0);
 }
 
-void menu::draw_menu_line(std::string caption, float lineWidth, float lineHeight, float lineTop, float lineLeft, float textLeft, bool active, bool title, bool rescaleText)
+void Menu::draw_menu_line(std::string caption, float lineWidth, float lineHeight, float lineTop, float lineLeft, float textLeft, bool active, bool title, bool rescaleText)
 {
 	int text_col[4] = { 255, 255, 255, 255 },
 		rect_col[4] = { 70, 95, 95, 255 };
@@ -76,7 +76,7 @@ void menu::draw_menu_line(std::string caption, float lineWidth, float lineHeight
 		rect_col[0], rect_col[1], rect_col[2], rect_col[3]);
 }
 
-void menu::update_status_text()
+void Menu::update_status_text()
 {
 	if (GetTickCount() < statusTextDrawTicksMax)
 	{
@@ -100,19 +100,19 @@ void menu::update_status_text()
 	}
 }
 
-void menu::set_status_text(std::string str, DWORD time, bool isGxtEntry)
+void Menu::set_status_text(std::string str, DWORD time, bool isGxtEntry)
 {
 	statusText = str;
 	statusTextDrawTicksMax = GetTickCount() + time;
 	statusTextGxtEntry = isGxtEntry;
 }
 
-bool menu::trainer_switch_pressed()
+bool Menu::trainer_switch_pressed()
 {
 	return IsKeyJustUp(VK_F4);
 }
 
-void menu::get_button_state(bool* a, bool* b, bool* up, bool* down, bool* l, bool* r)
+void Menu::get_button_state(bool* a, bool* b, bool* up, bool* down, bool* l, bool* r)
 {
 	if (a) *a = IsKeyDown(VK_NUMPAD5);
 	if (b) *b = IsKeyDown(VK_NUMPAD0) || trainer_switch_pressed() || IsKeyDown(VK_BACK);
@@ -122,12 +122,12 @@ void menu::get_button_state(bool* a, bool* b, bool* up, bool* down, bool* l, boo
 	if (l) *l = IsKeyDown(VK_NUMPAD4);
 }
 
-void menu::menu_beep()
+void Menu::menu_beep()
 {
 	AUDIO::PLAY_SOUND_FRONTEND(-1, "NAV_UP_DOWN", "HUD_FRONTEND_DEFAULT_SOUNDSET", 0);
 }
 
-void menu::process_squad_menu() {
+void Menu::process_squad_menu() {
 	const float lineWidth = 250.0f;
 	DWORD waitTime = 150;
 
@@ -252,7 +252,7 @@ void menu::process_squad_menu() {
 	}
 }
 
-void menu::process_main_menu()
+void Menu::process_main_menu()
 {
 	const float lineWidth = 250.0f;
 	const int lineCount = 7;
