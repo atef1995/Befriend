@@ -9,7 +9,6 @@
 #include <cstdlib>
 #include <vector>
 #include <iterator>
-#include <cassert>
 
 #pragma warning(disable : 4244 4305)
 
@@ -38,6 +37,8 @@ void DrawText3D(Vector3 worldPos, const char* text)
 	}
 }
 
+constexpr int kNoFreeSeat = -2;
+
 int GetFreePassengerSeat(Vehicle veh) {
 	int maxSeats = VEHICLE::GET_VEHICLE_MAX_NUMBER_OF_PASSENGERS(veh);
 
@@ -46,7 +47,7 @@ int GetFreePassengerSeat(Vehicle veh) {
 			return seat;
 		}
 	}
-	return -2;
+	return kNoFreeSeat;
 }
 
 enum Task
@@ -86,8 +87,8 @@ void RecruitPedestrian(Ped npc)
 	PED::SET_PED_RELATIONSHIP_GROUP_HASH(npc, MISC::GET_HASH_KEY("PLAYER"));
 
 	PED::SET_PED_AS_GROUP_MEMBER(npc, playerGroup);
-	PED::SET_PED_CAN_TELEPORT_TO_GROUP_LEADER(npc, playerGroup, TRUE);
-	PED::SET_PED_CAN_BE_TARGETTED(playerPed, FALSE);
+	PED::SET_PED_CAN_TELEPORT_TO_GROUP_LEADER(npc, playerGroup, true);
+	PED::SET_PED_CAN_BE_TARGETTED(playerPed, false);
 	WEAPON::GIVE_WEAPON_TO_PED(npc, MISC::GET_HASH_KEY("WEAPON_PISTOL"), 999, false, true);
 	TASK::TASK_FOLLOW_TO_OFFSET_OF_ENTITY(npc, PLAYER::PLAYER_PED_ID(), 0.0f, -2.0f, 0.0f, 1.5f, -1, 10.0f, true);
 	PED::SET_PED_NEVER_LEAVES_GROUP(npc, true);
@@ -117,9 +118,8 @@ void UpdateSquadState()
 	for (auto it = g_Menu.bodyguards.begin(); it != g_Menu.bodyguards.end(); )
 	{
 		Ped currentGuardHandle = it->handle;
-		assert(it->handle != -1);
 
-		if (!ENTITY::DOES_ENTITY_EXIST(currentGuardHandle) || ENTITY::IS_ENTITY_DEAD(currentGuardHandle, FALSE))
+		if (!ENTITY::DOES_ENTITY_EXIST(currentGuardHandle) || ENTITY::IS_ENTITY_DEAD(currentGuardHandle, false))
 		{
 			ShowNotification("~r~Squad Member " + it->codeName + " KIA!", 3000);
 
@@ -140,7 +140,7 @@ void UpdateSquadState()
 				if (!PED::IS_PED_IN_ANY_VEHICLE(it->handle, false) && TASK::GET_SCRIPT_TASK_STATUS(it->handle, 0x159B5B20) != 1)
 				{
 					int seat = GetFreePassengerSeat(veh);
-					if (seat != -2)
+					if (seat != kNoFreeSeat)
 					{
 						TASK::TASK_ENTER_VEHICLE(it->handle, veh, 20000, seat, 2.0f, 16, 0);
 					}
@@ -180,25 +180,22 @@ bool isVehicleDrivable(Vehicle veh) {
 }
 
 Vehicle getClosestVehicleFromPedPos(Ped ped, int maxDistance, int maxHeight, bool canReturnVehicleInside) {
-	Vehicle veh = NULL;
+	Vehicle veh = 0;
 	float smallestDistance = (float)maxDistance;
 	const int ARR_SIZE = 1024;
 	Vehicle vehs[ARR_SIZE];
 	int count = worldGetAllVehicles(vehs, ARR_SIZE);
 
-	if (vehs != NULL)
+	for (int i = 0; i < count; i++)
 	{
-		for (int i = 0; i < count; i++)
+		if (EntityExists(vehs[i]) && (canReturnVehicleInside || PED::IS_PED_IN_VEHICLE(ped, vehs[i], false) == false))
 		{
-			if (EntityExists(vehs[i]) && (canReturnVehicleInside || PED::IS_PED_IN_VEHICLE(ped, vehs[i], false) == false))
+			float distance = getDistanceBetweenEntities(ped, vehs[i]);
+			float height = getDistanceToGround(vehs[i]);
+			if (distance <= smallestDistance && height <= maxHeight && height >= 0 && isVehicleDrivable(vehs[i]))
 			{
-				float distance = getDistanceBetweenEntities(ped, vehs[i]);
-				float height = getDistanceToGround(vehs[i]);
-				if (distance <= smallestDistance && height <= maxHeight && height >= 0 && isVehicleDrivable(vehs[i]))
-				{
-					smallestDistance = distance;
-					veh = vehs[i];
-				}
+				smallestDistance = distance;
+				veh = vehs[i];
 			}
 		}
 	}
@@ -275,7 +272,7 @@ int main()
 			Entity targetEntity;
 			if (PLAYER::GET_ENTITY_PLAYER_IS_FREE_AIMING_AT(PLAYER::PLAYER_ID(), &targetEntity))
 			{
-				if (ENTITY::IS_ENTITY_A_PED(targetEntity) && !ENTITY::IS_ENTITY_DEAD(targetEntity, FALSE))
+				if (ENTITY::IS_ENTITY_A_PED(targetEntity) && !ENTITY::IS_ENTITY_DEAD(targetEntity, false))
 				{
 					Ped npc = targetEntity;
 					Vector3 npcPos = ENTITY::GET_ENTITY_COORDS(npc, true);

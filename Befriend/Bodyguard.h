@@ -1,14 +1,13 @@
-#ifndef BODYGUARD_H
-#define BODYGUARD_H
+#pragma once
 
 #include "natives.h"
 #include <string>
 
 struct Bodyguard
 {
-    Ped handle = -1;            // GTA V Entity ID handle
-    std::string codeName = "";  // Standard C++ String object
+    static constexpr Ped kInvalidHandle = -1;
+
+    Ped handle = kInvalidHandle;   // GTA V entity handle; kInvalidHandle = not assigned
+    std::string codeName = "";     // callsign such as "Alpha"
     bool hasATask = false;
 };
-
-#endif // !BODYGUARD_H
