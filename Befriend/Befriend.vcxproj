@@ -167,6 +167,7 @@
     <ClInclude Include="B:\ScriptHookSDK\sdk\inc\types.h" />
     <ClInclude Include="Bodyguard.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="pch.h" />
