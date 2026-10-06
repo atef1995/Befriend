@@ -91,8 +91,8 @@ void RecruitPedestrian(Ped npc)
 		Hash playerHash = MISC::GET_HASH_KEY("PLAYER");
 		Hash copHash = MISC::GET_HASH_KEY("COP");
 
-		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(1, bodyguardGroup, playerHash); // Respect
-		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(1, playerHash, bodyguardGroup);
+		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(0, bodyguardGroup, playerHash); // Respect
+		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(0, playerHash, bodyguardGroup);
 		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, bodyguardGroup, copHash);    // Hate
 		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, copHash, bodyguardGroup);
 	}
