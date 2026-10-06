@@ -72,32 +72,31 @@ void RecruitPedestrian(Ped npc)
 	}
 
 	Ped playerPed = PLAYER::PLAYER_PED_ID();
-	int playerGroup = PED::GET_PED_GROUP_INDEX(playerPed);
 
-	if (playerGroup == 0)
-	{
-		playerGroup = PED::CREATE_GROUP(0);
-		PED::SET_PED_AS_GROUP_LEADER(playerPed, playerGroup);
-	}
+	Hash bodyguardGroup;
+	PED::ADD_RELATIONSHIP_GROUP("BODYGUARDS", &bodyguardGroup);
+	
+	
+	PED::SET_PED_AS_GROUP_LEADER(playerPed, bodyguardGroup);
+	
 
 	PED::SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(npc, true);
 	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 5, true);
 	PED::SET_PED_COMBAT_ABILITY(npc, 2);
 	PED::SET_PED_COMBAT_MOVEMENT(npc, 2);
-	PED::SET_PED_RELATIONSHIP_GROUP_HASH(npc, MISC::GET_HASH_KEY("PLAYER"));
+	PED::SET_PED_RELATIONSHIP_GROUP_HASH(npc, bodyguardGroup);
 
-	PED::SET_PED_AS_GROUP_MEMBER(npc, playerGroup);
-	PED::SET_PED_CAN_TELEPORT_TO_GROUP_LEADER(npc, playerGroup, true);
+	PED::SET_PED_AS_GROUP_MEMBER(npc, bodyguardGroup);
+	PED::SET_PED_CAN_TELEPORT_TO_GROUP_LEADER(npc, bodyguardGroup, true);
 	PED::SET_PED_CAN_BE_TARGETTED(playerPed, false);
 	WEAPON::GIVE_WEAPON_TO_PED(npc, MISC::GET_HASH_KEY("WEAPON_PISTOL"), 999, false, true);
 	TASK::TASK_FOLLOW_TO_OFFSET_OF_ENTITY(npc, PLAYER::PLAYER_PED_ID(), 0.0f, -2.0f, 0.0f, 1.5f, -1, 10.0f, true);
 	PED::SET_PED_NEVER_LEAVES_GROUP(npc, true);
 
-	Hash playerGroupHash = MISC::GET_HASH_KEY("PLAYER");
 	Hash enemyGroupHash = MISC::GET_HASH_KEY("COP");
 
-	PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, playerGroupHash, enemyGroupHash);
-	PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, enemyGroupHash, playerGroupHash);
+	PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, bodyguardGroup, enemyGroupHash);
+	PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, enemyGroupHash, bodyguardGroup);
 
 	int randomArrayIndex = rand() % CALLSIGNS_COUNT;
 	std::string assignedName = CALLSIGNS[randomArrayIndex];
@@ -291,6 +290,6 @@ int main()
 
 void ScriptMain()
 {
-	srand(GetTickCount());
+	srand(GetTickCount64());
 	main();
 }

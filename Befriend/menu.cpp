@@ -78,7 +78,7 @@ void Menu::draw_menu_line(std::string caption, float lineWidth, float lineHeight
 
 void Menu::update_status_text()
 {
-	if (GetTickCount() < statusTextDrawTicksMax)
+	if (GetTickCount64() < statusTextDrawTicksMax)
 	{
 		HUD::SET_TEXT_FONT(0);
 		HUD::SET_TEXT_SCALE(0.55f, 0.55f);
@@ -103,7 +103,7 @@ void Menu::update_status_text()
 void Menu::set_status_text(std::string str, DWORD time, bool isGxtEntry)
 {
 	statusText = str;
-	statusTextDrawTicksMax = GetTickCount() + time;
+	statusTextDrawTicksMax = GetTickCount64() + time;
 	statusTextGxtEntry = isGxtEntry;
 }
 
@@ -162,7 +162,7 @@ void Menu::process_squad_menu() {
 			activeLineIndexPlayer = (lineCount > 0) ? lineCount - 1 : 0;
 		}
 
-		DWORD maxTickCount = GetTickCount() + waitTime;
+		DWORD maxTickCount = GetTickCount64() + waitTime;
 		do
 		{
 			draw_menu_line("SQUAD MANAGEMENT", lineWidth, 15.0f, 18.0f, 0.0f, 5.0f, false, true);
@@ -180,7 +180,7 @@ void Menu::process_squad_menu() {
 
 			update_status_text();
 			WAIT(0);
-		} while (GetTickCount() < maxTickCount);
+		} while (GetTickCount64() < maxTickCount);
 
 		waitTime = 0;
 
@@ -272,7 +272,7 @@ void Menu::process_main_menu()
 	DWORD waitTime = 150;
 	while (true)
 	{
-		DWORD maxTickCount = GetTickCount() + waitTime;
+		DWORD maxTickCount = GetTickCount64() + waitTime;
 		do
 		{
 			draw_menu_line(caption, lineWidth, 15.0f, 18.0f, 0.0f, 5.0f, false, true);
@@ -283,7 +283,7 @@ void Menu::process_main_menu()
 
 			update_status_text();
 			WAIT(0);
-		} while (GetTickCount() < maxTickCount);
+		} while (GetTickCount64() < maxTickCount);
 		waitTime = 0;
 
 		bool bSelect, bBack, bUp, bDown;
