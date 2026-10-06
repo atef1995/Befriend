@@ -81,35 +81,21 @@ void RecruitPedestrian(Ped npc)
 		PED::SET_PED_AS_GROUP_LEADER(playerPed, playerGroup);
 	}
 
-	// Relationship group, created exactly once (the native fails if it already exists,
-	// which would leave the hash unset for every recruit after the first).
-	static Hash bodyguardGroup = 0;
-	if (bodyguardGroup == 0)
-	{
-		PED::ADD_RELATIONSHIP_GROUP("BODYGUARDS", &bodyguardGroup);
-
-		Hash playerHash = MISC::GET_HASH_KEY("PLAYER");
-		Hash copHash = MISC::GET_HASH_KEY("COP");
-
-		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(0, bodyguardGroup, playerHash); // Respect
-		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(0, playerHash, bodyguardGroup);
-		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, bodyguardGroup, copHash);    // Hate
-		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, copHash, bodyguardGroup);
-	}
-
-	PED::SET_PED_RELATIONSHIP_GROUP_HASH(npc, bodyguardGroup);
+	// Join the PLAYER's own relationship group (read live; it equals
+	// GET_HASH_KEY("PLAYER") == 0x6F0783F5). A *separate* group made the guards
+	// bystanders: the engine treated the player's own crimes as a witnessed crime
+	// and, with fleeing disabled, they turned on him.
+	PED::SET_PED_RELATIONSHIP_GROUP_HASH(npc, PED::GET_PED_RELATIONSHIP_GROUP_HASH(playerPed));
 	PED::SET_PED_AS_GROUP_MEMBER(npc, playerGroup);
 	PED::SET_PED_CAN_TELEPORT_TO_GROUP_LEADER(npc, playerGroup, true);
 
-	// Combat profile: engage hostiles instead of fleeing from them.
+	// Combat profile: engage hostiles instead of running from them.
 	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 5, true);   // BF_AlwaysFight
-	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 13, true);  // BF_Aggressive
 	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 46, true);  // BF_CanFightArmedPedsWhenNotArmed
 	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 58, true);  // BF_DisableFleeFromCombat
 	PED::SET_PED_COMBAT_ABILITY(npc, 2);            // CA_Professional
 	PED::SET_PED_COMBAT_MOVEMENT(npc, 2);           // CM_WillAdvance
 	PED::SET_PED_COMBAT_RANGE(npc, 2);
-	PED::SET_PED_FLEE_ATTRIBUTES(npc, 0, false);
 	PED::SET_PED_ALERTNESS(npc, 3);
 	PED::SET_PED_ACCURACY(npc, 60);
 
