@@ -162,7 +162,7 @@ void Menu::process_squad_menu() {
 			activeLineIndexPlayer = (lineCount > 0) ? lineCount - 1 : 0;
 		}
 
-		DWORD maxTickCount = GetTickCount64() + waitTime;
+		ULONGLONG maxTickCount = GetTickCount64() + waitTime;
 		do
 		{
 			draw_menu_line("SQUAD MANAGEMENT", lineWidth, 15.0f, 18.0f, 0.0f, 5.0f, false, true);
@@ -272,7 +272,7 @@ void Menu::process_main_menu()
 	DWORD waitTime = 150;
 	while (true)
 	{
-		DWORD maxTickCount = GetTickCount64() + waitTime;
+		ULONGLONG maxTickCount = GetTickCount64() + waitTime;
 		do
 		{
 			draw_menu_line(caption, lineWidth, 15.0f, 18.0f, 0.0f, 5.0f, false, true);

@@ -13,7 +13,7 @@ private:
 	int activeLineIndexMain = 0;
 	int activeLineIndexPlayer = 0;
 	std::string statusText;
-	DWORD statusTextDrawTicksMax;
+	ULONGLONG statusTextDrawTicksMax;
 	bool statusTextGxtEntry;
 
 	void draw_rect(float A_0, float A_1, float A_2, float A_3, int A_4, int A_5, int A_6, int A_7);
