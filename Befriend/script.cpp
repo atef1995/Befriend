@@ -73,30 +73,49 @@ void RecruitPedestrian(Ped npc)
 
 	Ped playerPed = PLAYER::PLAYER_PED_ID();
 
-	Hash bodyguardGroup;
-	PED::ADD_RELATIONSHIP_GROUP("BODYGUARDS", &bodyguardGroup);
-	
-	
-	PED::SET_PED_AS_GROUP_LEADER(playerPed, bodyguardGroup);
-	
+	// Ped group for following: this is an INDEX from CREATE_GROUP, not a relationship hash.
+	int playerGroup = PED::GET_PED_GROUP_INDEX(playerPed);
+	if (playerGroup == 0)
+	{
+		playerGroup = PED::CREATE_GROUP(0);
+		PED::SET_PED_AS_GROUP_LEADER(playerPed, playerGroup);
+	}
 
-	PED::SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(npc, true);
-	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 5, true);
-	PED::SET_PED_COMBAT_ABILITY(npc, 2);
-	PED::SET_PED_COMBAT_MOVEMENT(npc, 2);
+	// Relationship group, created exactly once (the native fails if it already exists,
+	// which would leave the hash unset for every recruit after the first).
+	static Hash bodyguardGroup = 0;
+	if (bodyguardGroup == 0)
+	{
+		PED::ADD_RELATIONSHIP_GROUP("BODYGUARDS", &bodyguardGroup);
+
+		Hash playerHash = MISC::GET_HASH_KEY("PLAYER");
+		Hash copHash = MISC::GET_HASH_KEY("COP");
+
+		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(1, bodyguardGroup, playerHash); // Respect
+		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(1, playerHash, bodyguardGroup);
+		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, bodyguardGroup, copHash);    // Hate
+		PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, copHash, bodyguardGroup);
+	}
+
 	PED::SET_PED_RELATIONSHIP_GROUP_HASH(npc, bodyguardGroup);
+	PED::SET_PED_AS_GROUP_MEMBER(npc, playerGroup);
+	PED::SET_PED_CAN_TELEPORT_TO_GROUP_LEADER(npc, playerGroup, true);
 
-	PED::SET_PED_AS_GROUP_MEMBER(npc, bodyguardGroup);
-	PED::SET_PED_CAN_TELEPORT_TO_GROUP_LEADER(npc, bodyguardGroup, true);
-	PED::SET_PED_CAN_BE_TARGETTED(playerPed, false);
+	// Combat profile: engage hostiles instead of fleeing from them.
+	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 5, true);   // BF_AlwaysFight
+	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 13, true);  // BF_Aggressive
+	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 46, true);  // BF_CanFightArmedPedsWhenNotArmed
+	PED::SET_PED_COMBAT_ATTRIBUTES(npc, 58, true);  // BF_DisableFleeFromCombat
+	PED::SET_PED_COMBAT_ABILITY(npc, 2);            // CA_Professional
+	PED::SET_PED_COMBAT_MOVEMENT(npc, 2);           // CM_WillAdvance
+	PED::SET_PED_COMBAT_RANGE(npc, 2);
+	PED::SET_PED_FLEE_ATTRIBUTES(npc, 0, false);
+	PED::SET_PED_ALERTNESS(npc, 3);
+	PED::SET_PED_ACCURACY(npc, 60);
+
 	WEAPON::GIVE_WEAPON_TO_PED(npc, MISC::GET_HASH_KEY("WEAPON_PISTOL"), 999, false, true);
 	TASK::TASK_FOLLOW_TO_OFFSET_OF_ENTITY(npc, PLAYER::PLAYER_PED_ID(), 0.0f, -2.0f, 0.0f, 1.5f, -1, 10.0f, true);
 	PED::SET_PED_NEVER_LEAVES_GROUP(npc, true);
-
-	Hash enemyGroupHash = MISC::GET_HASH_KEY("COP");
-
-	PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, bodyguardGroup, enemyGroupHash);
-	PED::SET_RELATIONSHIP_BETWEEN_GROUPS(5, enemyGroupHash, bodyguardGroup);
 
 	int randomArrayIndex = rand() % CALLSIGNS_COUNT;
 	std::string assignedName = CALLSIGNS[randomArrayIndex];
