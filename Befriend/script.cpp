@@ -39,6 +39,10 @@ void DrawText3D(Vector3 worldPos, const char* text)
 
 constexpr int kNoFreeSeat = -2;
 
+// Beyond this many metres a squad member is warped into the player's vehicle instead of
+// being left to run after it (they cannot walk into a car that is already driving off).
+constexpr float kSquadRejoinDistance = 30.0f;
+
 int GetFreePassengerSeat(Vehicle veh) {
 	int maxSeats = VEHICLE::GET_VEHICLE_MAX_NUMBER_OF_PASSENGERS(veh);
 
@@ -219,20 +223,34 @@ void UpdateSquadState()
 		if (PED::IS_PED_SITTING_IN_ANY_VEHICLE(playerPed))
 		{
 			Vehicle veh = PED::GET_VEHICLE_PED_IS_IN(playerPed, true);
-			// 0x950B6492 is SCRIPT_TASK_ENTER_VEHICLE from eScriptTaskHash. The status check
-			// needs the real hash or the task is re-issued every frame and the guard never
-			// actually gets into the seat.
-			if (!PED::IS_PED_IN_ANY_VEHICLE(currentGuardHandle, false) &&
-				TASK::GET_SCRIPT_TASK_STATUS(currentGuardHandle, 0x950B6492) != 1)
+
+			if (!PED::IS_PED_IN_ANY_VEHICLE(currentGuardHandle, false))
 			{
 				int seat = GetFreePassengerSeat(veh);
 				if (seat != kNoFreeSeat)
 				{
-					// Flag 1 = normal entry (walk/run round to the door and get in).
-					// It must NOT be 3 or 16: per the SDK these are "teleport to vehicle"
-					// and "teleport directly into vehicle", which is what made the squad
-					// blink into the car the instant the player got in.
-					TASK::TASK_ENTER_VEHICLE(currentGuardHandle, veh, 20000, seat, 2.0f, 1, 0);
+					Vector3 playerCoords = ENTITY::GET_ENTITY_COORDS(playerPed, true);
+					float distance = MISC::GET_DISTANCE_BETWEEN_COORDS(
+						guardCoords.x, guardCoords.y, guardCoords.z,
+						playerCoords.x, playerCoords.y, playerCoords.z, true);
+
+					if (distance > kSquadRejoinDistance)
+					{
+						// Too far behind to walk it, so put them in directly. This is the
+						// deliberate one-shot warp (same native the reference trainer uses
+						// at spawn), not a teleport flag buried in a per-frame task.
+						TASK::TASK_WARP_PED_INTO_VEHICLE(currentGuardHandle, veh, seat);
+					}
+					// 0x950B6492 is SCRIPT_TASK_ENTER_VEHICLE from eScriptTaskHash. The
+					// status check needs the real hash or the task is re-issued every frame
+					// and the guard never actually gets into the seat.
+					else if (TASK::GET_SCRIPT_TASK_STATUS(currentGuardHandle, 0x950B6492) != 1)
+					{
+						// Flag 1 = normal entry (walk/run round to the door and get in).
+						// It must NOT be 3 or 16: per the SDK these are "teleport to
+						// vehicle" and "teleport directly into vehicle".
+						TASK::TASK_ENTER_VEHICLE(currentGuardHandle, veh, 20000, seat, 2.0f, 1, 0);
+					}
 				}
 			}
 		}
