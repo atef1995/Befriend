@@ -71,6 +71,42 @@ void RecruitPedestrian(Ped npc)
 		return;
 	}
 
+	// Rebuild the target as a clean script ped, the way the reference trainer hires a
+	// nearby ped (bodyguards.cpp, "add nearest ped as bodyguard"): keep the model and the
+	// spot, delete the ambient pedestrian, and create a fresh PED_TYPE_SPECIAL one.
+	// Recruiting the ambient ped in place leaves it with its civilian ped type, decision
+	// maker, existing tasks and witness state - which is why it carried on behaving like
+	// the civilian it was no matter what we set on it.
+	Hash pedModel = ENTITY::GET_ENTITY_MODEL(npc);
+	Vector3 pedCoords = ENTITY::GET_ENTITY_COORDS(npc, true);
+	float pedHeading = ENTITY::GET_ENTITY_HEADING(npc);
+
+	// Snapshot the outfit so the rebuilt ped still looks like the one recruited.
+	int pedComponents[12][3];
+	for (int c = 0; c < 12; c++)
+	{
+		pedComponents[c][0] = PED::GET_PED_DRAWABLE_VARIATION(npc, c);
+		pedComponents[c][1] = PED::GET_PED_TEXTURE_VARIATION(npc, c);
+		pedComponents[c][2] = PED::GET_PED_PALETTE_VARIATION(npc, c);
+	}
+
+	PED::DELETE_PED(&npc);
+	npc = PED::CREATE_PED(25 /* PED_TYPE_SPECIAL */, pedModel, pedCoords.x, pedCoords.y, pedCoords.z, pedHeading, false, false);
+
+	if (npc == 0)
+	{
+		ShowNotification("~r~Could not recruit that pedestrian.");
+		return;
+	}
+
+	for (int c = 0; c < 12; c++)
+	{
+		if (pedComponents[c][0] >= 0)
+		{
+			PED::SET_PED_COMPONENT_VARIATION(npc, c, pedComponents[c][0], pedComponents[c][1], pedComponents[c][2]);
+		}
+	}
+
 	Ped playerPed = PLAYER::PLAYER_PED_ID();
 
 	// The player's own ped group. Group membership is what makes a ped follow the player
