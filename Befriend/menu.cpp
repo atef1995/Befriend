@@ -145,8 +145,7 @@ void Menu::process_squad_menu() {
 				if (EntityExists(handle))
 				{
 					int hp = ENTITY::GET_ENTITY_HEALTH(handle);
-					std::string status = bodyguards[i].hasATask ? "Busy" : "Ready";
-					lines.push_back(bodyguards[i].codeName + " [HP: " + std::to_string(hp) + "] (" + status + ")");
+					lines.push_back(bodyguards[i].codeName + " [HP: " + std::to_string(hp) + "] (" + SquadStateName(bodyguards[i].currentState) + ")");
 				}
 				else {
 					lines.push_back(bodyguards[i].codeName + " [KIA]");
@@ -200,9 +199,11 @@ void Menu::process_squad_menu() {
 					{
 						if (EntityExists(member.handle))
 						{
+							TASK::TASK_SMART_FLEE_COORD(member.handle, playerCoords.x, playerCoords.y, playerCoords.z, 10000, 20000, false, true);
+							PED::SET_PED_NEVER_LEAVES_GROUP(member.handle, false);
+							PED::SET_BLOCKING_OF_NON_TEMPORARY_EVENTS(member.handle, false);
 							PED::REMOVE_PED_FROM_GROUP(member.handle);
 							ENTITY::SET_PED_AS_NO_LONGER_NEEDED(&member.handle);
-							TASK::TASK_SMART_FLEE_COORD(member.handle, playerCoords.x, playerCoords.y, playerCoords.z, 10000, 20000, false, true);
 						}
 					}
 					bodyguards.clear();
@@ -212,17 +213,11 @@ void Menu::process_squad_menu() {
 				{
 					Bodyguard& selected = bodyguards[activeLineIndexPlayer];
 
-					selected.hasATask = !selected.hasATask;
-					if (selected.hasATask)
-					{
-						TASK::TASK_STAND_STILL(selected.handle, -1);
-						set_status_text(selected.codeName + " Holding Position");
-					}
-					else
-					{
-						TASK::TASK_FOLLOW_TO_OFFSET_OF_ENTITY(selected.handle, PLAYER::PLAYER_PED_ID(), 0.0f, -2.0f, 0.0f, 1.5f, -1, 10.0f, true);
-						set_status_text(selected.codeName + " Following");
-					}
+					// One state machine for both the menu and the F7 order.
+					SquadState next = (selected.currentState == SquadState::HOLD_POSITION)
+						? SquadState::FOLLOW : SquadState::HOLD_POSITION;
+					SetBodyguardState(selected, next);
+					set_status_text(selected.codeName + " " + SquadStateName(next));
 				}
 			}
 			waitTime = 200;
