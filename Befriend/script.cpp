@@ -121,7 +121,10 @@ void RecruitPedestrian(Ped npc)
 	PED::SET_PED_AS_GROUP_LEADER(playerPed, playerGroup);
 	PED::SET_PED_AS_GROUP_MEMBER(npc, playerGroup);
 	PED::SET_PED_NEVER_LEAVES_GROUP(npc, true);
-	PED::SET_PED_CAN_TELEPORT_TO_GROUP_LEADER(npc, playerGroup, true);
+	// Off on purpose: this warps followers to the player whenever his coords jump, which
+	// is what dumped them on top of him the moment he got into a car. The reference
+	// trainer does not use it at all, and prefers tasking them into the vehicle instead.
+	PED::SET_PED_CAN_TELEPORT_TO_GROUP_LEADER(npc, playerGroup, false);
 	PED::SET_GROUP_FORMATION(playerGroup, 1);
 	PED::SET_GROUP_FORMATION_SPACING(playerGroup, 1.0f, 0.9f, 3.0f);
 
@@ -225,7 +228,11 @@ void UpdateSquadState()
 				int seat = GetFreePassengerSeat(veh);
 				if (seat != kNoFreeSeat)
 				{
-					TASK::TASK_ENTER_VEHICLE(currentGuardHandle, veh, 20000, seat, 2.0f, 16, 0);
+					// Flag 1 = normal entry (walk/run round to the door and get in).
+					// It must NOT be 3 or 16: per the SDK these are "teleport to vehicle"
+					// and "teleport directly into vehicle", which is what made the squad
+					// blink into the car the instant the player got in.
+					TASK::TASK_ENTER_VEHICLE(currentGuardHandle, veh, 20000, seat, 2.0f, 1, 0);
 				}
 			}
 		}
